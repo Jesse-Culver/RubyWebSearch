@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+require 'launchy'
+require 'erb'
+include ERB::Util
+#variables
+choice = 0
+search = ""
+url = ""
+
+#Display options
+puts "Please input the number for the site you wish to search (defaults to google on empty return)
+1. Google
+2. Wikipedia
+3. Stack Overflow
+4. Stack Exchange
+5. GIPHY"
+choice = STDIN.gets.to_i
+
+#default to google if no input given
+if choice == 0
+  choice = 1
+end
+
+if !choice.between?(1,5)
+  abort("ERROR NOT A VALID CHOICE")
+end
+
+puts "Please type in what you want to search"
+search = STDIN.gets
+puts "Searching..."
+
+=begin
+NOTE: We do not do a url_encode before hand because of sites like wikipedia do
+not recogonize things like %20 as a space for page names
+=end
+case choice
+when 1
+  search = url_encode(search)
+  url = "https://www.google.com/\#q=#{search}"
+when 2
+  search.tr(" ","_")
+  url = "https://en.wikipedia.org/wiki/#{search}"
+when 3
+  search = url_encode(search)
+  url = "https://stackoverflow.com/search?q=#{search}"
+when 4
+  search = url_encode(search)
+  url = "https://stackexchange.com/search?q=#{search}"
+when 5
+  search = url_encode(search)
+  url = "https://giphy.com/search/#{search}"
+else
+  puts "Error: Value made it past the check but was not in the case listing"
+end
+#launch it in their web browser
+Launchy.open(url)
